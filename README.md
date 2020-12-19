@@ -1,1 +1,1 @@
-# JS-Text-Editor is
+# JS-Text-Editor
