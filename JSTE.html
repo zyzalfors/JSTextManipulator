@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <title>JS Text Editor</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.2.0/math.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.18.0/parser.min.js"></script>
 </head>
 <body style="background-color: #aaaaaa;">
-JS Text Editor v1.2.7
+JS Text Editor 1.2.8
 <hr>
 <textarea id="originalTextArea" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
 <textarea id="manipulatedTextArea" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
 <textarea id="methodsListTextArea" rows="20" cols="50" readonly>{ "MethodsList":[] }</textarea>
 <br>
+<input type="checkbox" id="unwrap"><label for="unwrap">Unwrap text</label>
+<hr>
 <input type="file" id="inputFile" multiple>
 <input type="button" value="Get text" style="width:260px;" onclick="getText();">
 <br></br>
 <input type="text" id="enterRegex" style="width:253px;" placeholder="Enter regular expression">
-<input type="checkbox" id="globalMatch"><label for="globalMatch">global match</label> &nbsp;
-<input type="checkbox" id="caseInsensitiveMatch"><label for="caseInsensitiveMatch">case-insensitive match</label> &nbsp;
+<input type="checkbox" id="globalMatch"><label for="globalMatch">Global match</label> &nbsp;
+<input type="checkbox" id="caseInsensitiveMatch"><label for="caseInsensitiveMatch">Case-insensitive match</label> &nbsp;
 <input type="button" value="Clear regular expression settings" style="width:260px;" onclick="clearText(this.value);">
 <br></br>
 <input type="text" id="startIndexSub" style="width:253px;" placeholder="Enter starting index">
@@ -87,6 +89,23 @@ JS Text Editor v1.2.7
 <input type="button" value="Convert XML to JSON" style="width: 260px;" onclick="addGlobalMethod(this.value)">
 <input type="button" value="Search" style="width: 260px;" onclick="addLocalMethod(this.value)">
 <script>
+
+document.getElementById('unwrap').addEventListener('change', function ()
+  {
+   if(this.checked)
+   {
+    document.getElementById('originalTextArea').wrap = "off";
+	document.getElementById('manipulatedTextArea').wrap = "off";
+	document.getElementById('methodsListTextArea').wrap = "off";
+   }
+   else
+   {
+    document.getElementById('originalTextArea').wrap = "on";
+	document.getElementById('manipulatedTextArea').wrap = "on";
+	document.getElementById('methodsListTextArea').wrap = "on";
+   }
+  }
+);
 
 function sendTextToElement(file, elementID)
 {
@@ -167,7 +186,7 @@ function toSentence(originalText)
  let size = originalText.length;
  for (let i = 0; i < size; i++)
  {
-  if(originalText[i].search(/[!\?\.\t\n ]/) === -1)
+  if(originalText[i].search(/[!\?\.\s]/) === -1)
   {
    if (toUp === true) 
    {
@@ -182,7 +201,7 @@ function toSentence(originalText)
   else
   {
    manipulatedText += originalText[i];
-   if (i < size - 1 && originalText[i].search(/[!\?\.]/) !== -1 && originalText[i + 1].search(/[\t\n ]/) !== -1)
+   if (i < size - 1 && originalText[i].search(/[!\?\.]/) !== -1 && originalText[i + 1].search(/\s/) !== -1)
    {
 	toUp = true;
    }
@@ -473,7 +492,8 @@ function searchText(originalText,startIndexSub,finalIndexSub,regExp)
  {
   if(checkIndex === matches.index)
   {
-   return "Searching interrupted because of infinite matchings";
+   manipulatedText += "\nSearching interrupted because of infinite matchings\n";
+   break;
   }
   n++;
   manipulatedText += n + " | " + matches[0] + " | " + (startIndexSub + matches.index) + " -> " + (startIndexSub + matches.index + matches[0].length - 1) + "\n";
@@ -515,8 +535,7 @@ function clearText(text)
  }
  if(text.includes("methods"))
  {
-  let json = "{ \"MethodsList\":[] }";
-  document.getElementById('methodsListTextArea').value = json;
+  document.getElementById('methodsListTextArea').value = "{ \"MethodsList\":[] }";
  }
  if(text.includes("select"))
  {
@@ -543,7 +562,7 @@ function copyOriginal()
 function saveOriginal()
 {
  let originalText = document.getElementById('originalTextArea').value;
- saveText(originalText,"JSTEv1.2.7_originalText.txt");
+ saveText(originalText,"JSTE1.2.8OriginalText.txt");
 }
 
 function copyManipulated() 
@@ -555,7 +574,7 @@ function copyManipulated()
 function saveManipulated()
 {
  let manipulatedText = document.getElementById('originalTextArea').value;
- saveText(manipulatedText,"JSTEv1.2.7_manipulatedText.txt");
+ saveText(manipulatedText,"JSTE1.2.8ManipulatedText.txt");
 }
 
 function removeFirstMethod()
@@ -668,7 +687,7 @@ function processText()
   }
   catch(error)
   {
-   manipulatedText = "Invalid regular expression \"" + regex + "\"";
+   manipulatedText = "Invalid regular expression";
    break;
   }
   if(JSON.stringify(methods[i].Method).includes("Replace"))
