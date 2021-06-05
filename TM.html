@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Text Manipulator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.19.0/parser.min.js"></script>
+</head>
+<body style="background-color: #c0c0c0;">
+Text Manipulator 1.4.1
+<hr>
+<textarea id="original" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
+<textarea id="manipulated" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
+<textarea id="methods" rows="20" cols="50" readonly>{ "methods" : [] }</textarea>
+<br>
+<input type="checkbox" id="unwrap"><label for="unwrap">Unwrap text</label>
+<hr>
+<button style="width:260px;" onclick="document.getElementById('file').click()">Select file</button>
+<input type="file" id="file" style="display:none">
+<input type="button" value="Get text" style="width:260px;" onclick="getText()">
+<br></br>
+<input type="text" id="encoding" style="width:253px;" placeholder="Enter encoding used in file">
+<input type="button" value="Convert to UTF-8 encoding" style="width:260px;" onclick="toUTF8()">
+<input type="button" value="Convert to ASCII encoding" style="width:260px;" onclick="toASCII()">
+<input type="button" value="Convert to UTF-16 BE encoding" style="width:260px;" onclick="toUTF16BE()">
+<input type="button" value="Convert to UTF-16 LE encoding" style="width:260px;" onclick="toUTF16LE()">
+<br></br>
+<input type="button" value="Convert from Base64" style="width:260px;" onclick="base64ToFile()">
+<input type="button" value="Convert to Base64" style="width:260px;" onclick="fileToBase64()">
+<hr>
+<input type="button" value="Clear text areas" style="width:260px;" onclick="clearText(this.value);">
+<input type="button" value="Clear original text area" style="width:260px;" onclick="clearText(this.value)">
+<input type="button" value="Clear manipulated text area" style="width:260px;" onclick="clearText(this.value)">
+<input type="button" value="Clear methods list" style="width:260px;" onclick="clearText(this.value)">
+<input type="button" value="Copy original text to clipboard" style="width:260px;" onclick="copyText(this.value)">
+<br></br>
+<input type="button" value="Copy manipulated text to clipboard" style="width:260px;" onclick="copyText(this.value)">
+<input type="button" value="Move manipulated text to original text area" style="width:260px;" onclick="moveText(this.value)">
+<input type="button" value="Move original text to manipulated text area" style="width:260px;" onclick="moveText(this.value)">
+<input type="button" value="Save original text" style="width:260px;" onclick="saveText(this.value)">
+<input type="button" value="Save manipulated text" style="width:260px;" onclick="saveText(this.value)">
+<br></br>
+<input type="button" value="Remove first method from list" style="width:260px;" onclick="removeMethod(this.value)">
+<input type="button" value="Remove last method from list" style="width:260px;" onclick="removeMethod(this.value)">
+<input type="button" value="Manipulate original text" style="width:260px;" onclick="manipulateText()">
+<hr>
+<input type="text" id="start" style="width:253px;" placeholder="Enter substring starting index">
+<input type="text" id="final" style="width:253px;" placeholder="Enter substring final index">
+<input type="text" id="replacement" style="width:253px;" placeholder="Enter replacement">
+<input type="text" id="regex" style="width:253px;" placeholder="Enter regular expression">
+<input type="checkbox" id="global"><label for="global">Global match</label>
+<input type="checkbox" id="caseIns"><label for="caseIns">Case-insensitive match</label>
+<br></br>
+<input type="button" value="Convert to sentence case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to upper case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to lower case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to inverse case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to alternating case 1" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Convert to alternating case 2" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to capitalized case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to camel case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to snake case" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to slug case" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Latinise" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Reverse text" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to Base64" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert from Base64" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Set to one line" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Remove redundant spaces" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Remove spaces" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Remove duplicated lines" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Remove blank lines" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Set to list" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Reverse list" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Sort list naturally" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Extract substrings" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Evaluate as math expression" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Simplify as math expression" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Beautify JSON" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Uglify JSON" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert XML to JSON" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to UTF-8 binary" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Convert to UTF-16 BE binary" style="width: 260px;" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Search" style="width: 260px;" onclick="addMethod(this.value)">
+<input type="button" value="Replace" style="width:260px;" onclick="addMethod(this.value)">
+<script>
+
+document.getElementById("unwrap").addEventListener("change", function ()
+  {
+   let textAreas = Array.from(document.getElementsByTagName("textarea"));
+   if(this.checked)
+   {
+    textAreas.forEach( function (area) { area.wrap = "off"; } );
+   }
+   else
+   {
+    textAreas.forEach( function (area) { area.wrap = "on"; } );
+   }
+  }
+);
+
+function getText()
+{
+ let value = removeSpaces(document.getElementById("encoding").value);
+ let encoding = (value === "") ? "UTF-8" : value;
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsArrayBuffer(file);
+ reader.onload = function () { document.getElementById("original").value = new TextDecoder(encoding).decode(new Uint8Array(this.result)); };
+}
+
+function saveText(filter)
+{
+ let text = filter.includes("original") ? document.getElementById("original").value : document.getElementById("manipulated").value;
+ let blob = new Blob([text],{type:'text/plain'});
+ let downloadLink = document.createElement("a");
+ downloadLink.download = "TM_saveText.txt";
+ downloadLink.href = window.URL.createObjectURL(blob);
+ downloadLink.click();
+}
+
+function toUTF8()
+{
+ let value = removeSpaces(document.getElementById("encoding").value);
+ let encoding = (value === "") ? "UTF-8" : value;
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsArrayBuffer(file);
+ reader.onload = function () {
+                              let text = new TextDecoder(encoding).decode(new Uint8Array(this.result));
+							  let blob = new Blob([text],{type:'text/plain'});
+                              let downloadLink = document.createElement("a");
+                              downloadLink.download = "TM_toUTF8.txt";
+                              downloadLink.href = window.URL.createObjectURL(blob);
+                              downloadLink.click();
+							 };
+}
+
+function toASCII()
+{
+ let value = removeSpaces(document.getElementById("encoding").value);
+ let encoding = (value === "") ? "UTF-8" : value;
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsArrayBuffer(file);
+ reader.onload = function () {
+						      let characters = Array.from(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+						      let bytes = [];
+						      for(let entry of characters)
+                              {
+     	 		 	           let code = (entry.codePointAt() <= 255) ? entry.codePointAt() : 20;
+							   bytes.push(code);
+						      }
+                              let blob = new Blob([new Uint8Array(bytes)],{type:'octet/stream'});
+                              let downloadLink = document.createElement("a");
+                              downloadLink.download = "TM_toASCII.txt";
+                              downloadLink.href = window.URL.createObjectURL(blob);
+                              downloadLink.click();
+                             };
+}
+
+function toUTF16BE()
+{
+ let value = removeSpaces(document.getElementById("encoding").value);
+ let encoding = (value === "") ? "UTF-8" : value;
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsArrayBuffer(file);
+ reader.onload = function () 
+                          {
+						   let characters = Array.from(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+		                   let bytes = [254, 255];
+                           for(let entry of characters)
+			               {
+						    let code = entry.codePointAt();
+	 		  				if(code <= 65535)
+							{
+							 let stringifiedBytes = code.toString(2).padStart(16,"0");
+							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+						     bytes.push(parseInt(stringifiedBytes.substring(8),2));
+							}
+							else
+							{
+							 let tempBin = (code - 65536).toString(2).padStart(20,"0");
+							 let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
+							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(24),2));
+							}
+						   }						   
+			               let blob = new Blob([new Uint8Array(bytes)],{type:'octet/stream'});
+                           let downloadLink = document.createElement("a");
+                           downloadLink.download = "TM_toUTF16BE.txt";
+                           downloadLink.href = window.URL.createObjectURL(blob);
+                           downloadLink.click();							
+                          };
+}
+
+function toUTF16LE()
+{
+ let value = removeSpaces(document.getElementById("encoding").value);
+ let encoding = (value === "") ? "UTF-8" : value;
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsArrayBuffer(file);
+ reader.onload = function () 
+                          {
+						   let characters = Array.from(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+		                   let bytes = [255, 254];
+						   for(let entry of characters)
+			               {
+						    let code = entry.codePointAt();
+	 		  				if(code <= 65535)
+							{
+							 let stringifiedBytes = code.toString(2).padStart(16,"0");
+							 bytes.push(parseInt(stringifiedBytes.substring(8),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+						    }
+							else
+							{
+							 let tempBin = (code - 65536).toString(2).padStart(20,"0");
+							 let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
+							 bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+                             bytes.push(parseInt(stringifiedBytes.substring(24),2));
+							 bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
+							}
+						   }
+			               let blob = new Blob([new Uint8Array(bytes)],{type:'octet/stream'});
+                           let downloadLink = document.createElement("a");
+                           downloadLink.download = "TM_toUTF16LE.txt";
+                           downloadLink.href = window.URL.createObjectURL(blob);
+                           downloadLink.click();							
+                          };
+}
+
+function clearText(filter)
+{
+ if(filter.includes("areas"))
+ {
+  document.getElementById("original").value = '';
+  document.getElementById("manipulated").value = '';
+ }
+ if(filter.includes("original"))
+ {
+  document.getElementById("original").value = '';
+ }
+ if(filter.includes("manipulated"))
+ {
+  document.getElementById("manipulated").value = '';
+ }
+ if(filter.includes("methods"))
+ {
+  document.getElementById("methods").value = "{ \"methods\" : [] }";
+ }
+}
+
+function copyText(filter)
+{
+ if(filter.includes("original"))
+ {
+  document.getElementById("original").select();
+ }
+ if(filter.includes("manipulated"))
+ {
+  document.getElementById("manipulated").select();
+ }
+ document.execCommand("copy");
+}
+
+function removeMethod(filter)
+{
+ let json = JSON.parse(document.getElementById("methods").value);
+ if(filter.includes("first"))
+ {
+  json.methods.shift();
+ }
+ if(filter.includes("last"))
+ {
+  json.methods.pop();
+ }
+ document.getElementById("methods").value = JSON.stringify(json,null,1);
+}
+
+function moveText(filter)
+{
+ if(filter.includes("to original"))
+ {
+  document.getElementById("original").value = document.getElementById("manipulated").value;
+ }
+ if(filter.includes("to manipulated"))
+ {
+  document.getElementById("manipulated").value = document.getElementById("original").value;
+ }
+}
+
+function addMethod(filter)
+{
+ let regex = document.getElementById("regex").value;
+ let startI = parseInt(document.getElementById("start").value);
+ let finalI = parseInt(document.getElementById("final").value);
+ let global = (filter === "Search") ? true : document.getElementById("global").checked;
+ let caseIns = document.getElementById("caseIns").checked;
+ let replacement = (filter === "Replace") ? document.getElementById("replacement").value : null;
+ let json = JSON.parse(document.getElementById("methods").value);
+ json.methods.push(
+                   {
+                    "method": filter,
+                    "regularExpression": regex,
+					"global": global,
+					"caseInsensitive": caseIns,
+					"replacement": replacement,
+					"startingIndex": startI,
+					"finalIndex": finalI
+				   }
+				  );
+ document.getElementById("methods").value = JSON.stringify(json,null,1);
+}
+
+function clearFromJSON(text)
+{
+ return text.replace(/\\\\/g,"\\").substring(1).slice(0,-1);
+}
+
+function getRegex(regex,global,caseIns)
+{
+ try
+ {
+  if(global && caseIns)
+  {
+   return new RegExp(regex,"gi");
+  }
+  if(global && !caseIns)
+  {
+   return new RegExp(regex,"g");								
+  }
+  if(!global && caseIns)
+  {
+   return new RegExp(regex,"i");								
+  }
+  return new RegExp(regex);
+ }
+ catch(error)
+ {
+  return new RegExp("");
+ }
+}
+
+function extract(text,startI,finalI,regExp)
+{
+ let matches = getSubstring(text,startI,finalI).match(regExp);
+ let manipulatedText = "";
+ for(let match of matches)
+ {
+  manipulatedText += match + "\n";
+ }
+ return manipulatedText.slice(0,-1);
+}
+
+function getSubstring(text,startI,finalI)
+{
+ let characters = Array.from(text);
+ let manipulatedText = "";
+ for(let i = startI; i <= finalI; i++)
+ {
+  manipulatedText += characters[i];
+ }
+ return manipulatedText;
+}
+
+function replaceWithMethod(text,startI,finalI,regExp,method)
+{
+ let size = Array.from(text).length;
+ let firstPart = getSubstring(text,0,startI - 1);
+ let lastPart = getSubstring(text,finalI + 1,size - 1);
+ let manipulatedPart = getSubstring(text,startI,finalI).replace(regExp,function(match){ return method(match); });
+ return firstPart + manipulatedPart + lastPart;
+}
+
+function replaceWithReplacement(text,startI,finalI,regExp,replacement)
+{
+ let size = Array.from(text).length;
+ let firstPart = getSubstring(text,0,startI - 1);
+ let lastPart = getSubstring(text,finalI + 1,size - 1);
+ let manipulatedPart = getSubstring(text,startI,finalI).replace(regExp,replacement);
+ return firstPart + manipulatedPart + lastPart;
+}
+
+function toUTF8Bytes(text)
+{
+ let stringifiedBytes = "";
+ let bytes = new TextEncoder().encode(text);
+ bytes.forEach(function (entry) { stringifiedBytes += entry.toString(2).padStart(8,"0"); } );
+ return stringifiedBytes;
+}
+
+function toUTF16BEBytes(text)
+{
+ let characters = Array.from(text);
+ let stringifiedBytes = "";
+ for(let entry of characters)
+ {
+  let code = entry.codePointAt();
+  if(code <= 65535)
+  {
+   stringifiedBytes += code.toString(2).padStart(16,"0");
+  }
+  else
+  {
+   let tempBin = (code - 65536).toString(2).padStart(20,"0");
+   stringifiedBytes += "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
+  }
+ }
+ return stringifiedBytes;
+}
+
+function toSentence(text)
+{
+ let manipulatedText = "";
+ let toUp = true;
+ for(let i = 0; i < text.length; i++)
+ {
+  if(text[i].search(/[!\?\.\s]/) === -1)
+  {
+   if (toUp === true && text[i].toUpperCase() !== text[i].toLowerCase() ) 
+   {
+	manipulatedText += text[i].toUpperCase();
+	toUp = false;
+   }
+   else
+   {
+  	manipulatedText += text[i].toLowerCase();	
+   }
+  }
+  else
+  {
+   manipulatedText += text[i];
+   if (i < text.length - 1 && text[i].search(/[!\?\.]/) !== -1 && text[i + 1].search(/\s/) !== -1)
+   {
+	toUp = true;
+   }
+  }
+ }
+ return manipulatedText;
+}
+
+function toUpper(text)
+{
+ return text.toUpperCase();
+}
+
+function toLower(text)
+{
+ return text.toLowerCase();
+}
+
+function toInverse(text)
+{
+ let manipulatedText = "";
+ for (let i = 0; i < text.length; i++)
+ {
+  if (text[i] === text[i].toUpperCase()) 
+  {
+   manipulatedText += text[i].toLowerCase();
+  } 
+  else 
+  {
+   manipulatedText += text[i].toUpperCase();
+  }
+ }
+ return manipulatedText;		                      
+}
+
+function toAlternating1(text)
+{
+ let manipulatedText = "";
+ let toUp = true;
+ for (let i = 0; i < text.length; i++)
+ {
+  if (text[i].toUpperCase() !== text[i].toLowerCase())
+  {
+   if(toUp === true)
+   {
+    manipulatedText += text[i].toUpperCase();
+    toUp = false;
+   }
+   else
+   {
+    manipulatedText += text[i].toLowerCase();
+    toUp = true;
+   }
+  }
+  else
+  {
+   manipulatedText += text[i];
+  }
+ }
+ return manipulatedText;
+}
+ 
+function toAlternating2(text)
+{
+ let manipulatedText = "";
+ let toUp = false;
+ for (let i = 0; i < text.length; i++)
+ {
+  if (text[i].toUpperCase() !== text[i].toLowerCase())
+  {
+   if(toUp === true)
+   {
+    manipulatedText += text[i].toUpperCase();
+    toUp = false;
+   }
+   else
+   {
+    manipulatedText += text[i].toLowerCase();
+    toUp = true;
+   }
+  }
+  else
+  {
+   manipulatedText += text[i];
+  }
+ }
+ return manipulatedText;
+}
+
+function toCapitalized(text)
+{
+ let manipulatedText = "";
+ let toUp = true;
+ for (let i = 0; i < text.length; i++)
+ {
+  if(text[i].search(/\s/) === -1)
+  {
+   if (toUp === true) 
+   {
+	manipulatedText += text[i].toUpperCase();
+	toUp = false;
+   }
+   else
+   {
+	manipulatedText += text[i].toLowerCase();
+   }
+  }
+  else
+  {
+   manipulatedText += text[i];
+   toUp = true;      
+  }
+ }
+ return manipulatedText;
+}
+
+function reverse(text)
+{
+ let characters = Array.from(text);
+ let manipulatedText = "";
+ for(let i = characters.length - 1; i >= 0; i--)
+ {
+  manipulatedText += characters[i];
+ }
+ return manipulatedText;
+}
+
+function toBase64(text)
+{
+ return btoa(unescape(encodeURIComponent(text)));
+}
+
+function fileToBase64()
+{
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsDataURL(file);
+ reader.onload = function () 
+                          {
+		                   let base64String = this.result.substring(this.result.search(",") + 1);
+                           let blob = new Blob([base64String],{type:'text/plain'});
+                           let downloadLink = document.createElement("a");
+                           downloadLink.download = "TM_fileToBase64.txt";
+                           downloadLink.href = window.URL.createObjectURL(blob);
+                           downloadLink.click();							
+                          };
+}
+
+function fromBase64(text)
+{
+ return decodeURIComponent(escape(atob(text)));
+}
+
+function base64ToFile()
+{
+ let file = document.getElementById("file").files[0];
+ let reader = new FileReader();
+ reader.readAsText(file);
+ reader.onload = function () 
+                          {
+						   let rawText = window.atob(this.result);
+						   let bytes = [];
+                           Array.from(rawText).forEach( function (entry) { bytes.push(entry.charCodeAt()); } );
+			               let blob = new Blob([new Uint8Array(bytes)],{type:'octet/stream'});
+                           let downloadLink = document.createElement("a");
+                           downloadLink.download = "TM_base64ToFile.txt";
+                           downloadLink.href = window.URL.createObjectURL(blob);
+                           downloadLink.click();					
+                          };
+}
+
+function toOneLine(text)
+{
+ return text.replace(/\n+/g," ").trim();
+}
+
+function removeSpaces(text)
+{
+ return text.replace(/[\t ]/g,"");
+}
+
+function removeRedundantSpaces(text)
+{
+ return text.trim().replace(/[\t ]+/g," ").replace(/[\t ]+\n/g,"\n");
+}
+
+function toList(text)
+{
+ return text.trim().replace(/\s/g,"\n").replace(/\n+/g,"\n"); 
+}
+
+function removeDuplicatedLines(text)
+{
+ let lines = Array.from(new Set(text.split("\n")));
+ let manipulatedText = "";
+ for(let i = 0; i < lines.length; i++)
+ {
+  manipulatedText += lines[i] + "\n";								 
+ }
+ return manipulatedText.slice(0,-1);
+}
+
+function removeBlankLines(text)
+{
+ let lines = text.replace(/\n+/g,"\n").split("\n");
+ let manipulatedText = "";
+ for (let i = 0; i < lines.length; i++)
+ {
+  if(lines[i].search(/[^\s]/) !== -1)
+  {
+   manipulatedText += lines[i] + "\n";
+  }
+ }
+ return manipulatedText.slice(0,-1);
+}
+
+function reverseList(text)
+{
+ let lines = text.replace(/\n+/g,"\n").split("\n").reverse();
+ let manipulatedText = "";
+ for(let i = 0 ; i < lines.length; i++)
+ {
+  manipulatedText += lines[i] + "\n";
+ }
+ return manipulatedText.slice(0,-1);
+}
+
+function sortNaturally(text)
+{
+ let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+ let lines = text.replace(/\n+/g,"\n").split("\n").sort(collator.compare);
+ let manipulatedText = "";    
+ for(let i = 0; i < lines.length; i++)
+ {
+  manipulatedText += lines[i] + "\n";                            
+ }
+ return manipulatedText.slice(0,-1);
+}
+
+function beautifyJSON(text)
+{
+ try
+ {
+  return JSON.stringify(JSON.parse(text),null,1);
+ }
+ catch(error)
+ {
+  return "Invalid JSON string";
+ }
+}
+
+function uglifyJSON(text)
+{
+ try
+ {
+  return JSON.stringify(JSON.parse(text),null,0);
+ }
+ catch(error)
+ {
+  return "Invalid JSON string";
+ }
+}
+
+function XMLtoJSON(text)
+{
+ return JSON.stringify(parser.convertToJson(parser.getTraversalObj(text,{ }),{ }),null,0);
+}
+
+function searchText(text,startI,finalI,regExp)
+{
+ text = getSubstring(text,startI,finalI);
+ let match = null;
+ let manipulatedText = "";
+ let check = -1;
+ let n = 0;
+ while((match = regExp.exec(text)) !== null)
+ {
+  if(check === match.index)
+  {
+   manipulatedText += "\nSearching interrupted because of infinite matchings\n";
+   break;
+  }
+  n++;
+  let pos = match.index;
+  manipulatedText += n + " | " + match[0] + " | " + (startI + pos) + " -> " + (startI + pos + Array.from(match[0]).length - 1) + "\n";
+  check = match.index;
+ }
+ manipulatedText = manipulatedText.slice(0,-1);
+ if(manipulatedText === "")
+ {
+  manipulatedText = "No results found";
+ }
+ return manipulatedText;
+}
+
+function manipulateText()
+{
+ let methods = JSON.parse(document.getElementById("methods").value).methods;
+ let manipulatedText = document.getElementById("original").value;
+ for(let entry of methods)
+ {
+  let size = Array.from(manipulatedText).length;
+  let regex = clearFromJSON(JSON.stringify(entry.regularExpression));
+  let replacement = clearFromJSON(JSON.stringify(entry.replacement));
+  let global = entry.global;
+  let caseIns = entry.caseInsensitive;
+  let regExp = getRegex(regex,global,caseIns);
+  let startI = (entry.startingIndex === null || entry.startingIndex < 0 || entry.startingIndex > (size - 1)) ? 0 : entry.startingIndex;
+  let finalI = (entry.finalIndex === null || entry.finalIndex < startI || entry.finalIndex > (size - 1)) ? (size - 1) : entry.finalIndex;
+  let method = JSON.stringify(entry.method);
+  if(method.includes("Replace"))
+  {
+   manipulatedText = replaceWithReplacement(manipulatedText,startI,finalI,regExp,replacement);
+  }
+  if(method.includes("sentence"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toSentence);
+  }
+  if(method.includes("upper"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toUpper);
+  }
+  if(method.includes("lower"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toLower);
+  }
+  if(method.includes("inverse"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toInverse);
+  }
+  if(method.includes("case 1"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toAlternating1);
+  }
+  if(method.includes("case 2"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toAlternating2);
+  }
+  if(method.includes("capitalized"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toCapitalized);
+  }
+  if(method.includes("camel"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,v.camelCase);
+  }
+  if(method.includes("snake"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,v.snakeCase);
+  }
+  if(method.includes("slug"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,v.slugify);
+  }
+  if(method.includes("Latinise"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,v.latinise);
+  }
+  if(method.includes("Reverse text"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,reverse);
+  }
+  if(method.includes("to Base64"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toBase64);
+  }
+  if(method.includes("from Base64"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,fromBase64);
+  }
+  if(method.includes("one"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toOneLine);
+  }
+  if(method.includes("redundant"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,removeRedundantSpaces);
+  }
+  if(method.includes("Remove spaces"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,removeSpaces);
+  }
+  if(method.includes("duplicated"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,removeDuplicatedLines);
+  }
+  if(method.includes("blank"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,removeBlankLines);
+  }
+  if(method.includes("to list"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toList);
+  }
+  if(method.includes("Reverse list"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,reverseList);
+  }
+  if(method.includes("naturally"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,sortNaturally);
+  }
+  if(method.includes("Extract"))
+  {
+   manipulatedText = extract(manipulatedText,startI,finalI,regExp);
+  }
+  if(method.includes("Evaluate"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,math.evaluate);
+  }
+  if(method.includes("Simplify"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,math.simplify);
+  }
+  if(method.includes("Beautify"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,beautifyJSON);
+  }
+  if(method.includes("Uglify"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,uglifyJSON);
+  }
+  if(method.includes("XML to JSON"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,XMLtoJSON);
+  }
+  if(method.includes("8"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toUTF8Bytes);
+  }
+  if(method.includes("16"))
+  {
+   manipulatedText = replaceWithMethod(manipulatedText,startI,finalI,regExp,toUTF16BEBytes);
+  }
+  if(method.includes("Search"))
+  {
+   manipulatedText = searchText(manipulatedText,startI,finalI,regExp);
+  }
+ }
+ document.getElementById("manipulated").value = manipulatedText;
+}
+
+</script>
+</body>
+</html>
