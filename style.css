@@ -1,0 +1,16 @@
+body {   
+     background-color: lightgrey;
+}
+
+input[type=button] {
+	background-color: white;
+	width: 260px;
+}
+
+input[type=number], input[type=text]  {
+	width: 252px;
+}
+
+input[type=file]  {
+	display: none;
+}

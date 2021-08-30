@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JS Text Manipulator 1.4.4</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.19.0/parser.min.js"></script>
+<script src="script.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+JS Text Manipulator 1.4.4
+<hr>
+<textarea id="original" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
+<textarea id="manipulated" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
+<textarea id="methods" rows="20" cols="50" readonly>{ "methods" : [] }</textarea>
+<br>
+<input type="checkbox" id="unwrap" onchange="unwrapText(this)"><label for="unwrap">Unwrap text</label>
+<hr>
+<input type="file" id="file">
+<input type="button" value="Select file" onclick="document.getElementById('file').click()">
+<input type="button" value="Get file text" onclick="getFileText()">
+<input type="button" value="Get clipboard text" onclick="getClipboardText()">
+<br></br>
+<input type="text" id="encoding" placeholder="Enter encoding used in file">
+<input type="button" value="Convert to UTF-8 encoding" onclick="toUTF8()">
+<input type="button" value="Convert to ASCII encoding"  onclick="toASCII()">
+<input type="button" value="Convert to UTF-16 BE encoding" onclick="toUTF16BE()">
+<input type="button" value="Convert to UTF-16 LE encoding" onclick="toUTF16LE()">
+<br></br>
+<input type="button" value="Convert from Base64" onclick="base64ToFile()">
+<input type="button" value="Convert to Base64" onclick="fileToBase64()">
+<hr>
+<input type="button" value="Clear text areas" onclick="clearText(this.value);">
+<input type="button" value="Clear original text area" onclick="clearText(this.value)">
+<input type="button" value="Clear manipulated text area" onclick="clearText(this.value)">
+<input type="button" value="Clear methods list" onclick="clearText(this.value)">
+<input type="button" value="Copy original text to clipboard" onclick="copyText(this.value)">
+<br></br>
+<input type="button" value="Copy manipulated text to clipboard" onclick="copyText(this.value)">
+<input type="button" value="Move manipulated text to original text area" onclick="moveText(this.value)">
+<input type="button" value="Move original text to manipulated text area" onclick="moveText(this.value)">
+<input type="button" value="Save original text" onclick="saveText(this.value)">
+<input type="button" value="Save manipulated text" onclick="saveText(this.value)">
+<br></br>
+<input type="button" value="Remove first method from list" onclick="removeMethod(this.value)">
+<input type="button" value="Remove last method from list" onclick="removeMethod(this.value)">
+<input type="button" value="Manipulate original text" onclick="manipulateText()">
+<hr>
+<input type="number" id="start" placeholder="Enter substring starting index">
+<input type="number" id="final" placeholder="Enter substring final index">
+<input type="text" id="replacement"placeholder="Enter replacement">
+<input type="text" id="regex" placeholder="Enter regular expression">
+<input type="checkbox" id="global"><label>Global</label>
+<input type="checkbox" id="caseIns"><label>Case-insensitive</label>
+<br></br>
+<input type="button" value="Convert to sentence case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to upper case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to lower case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to inverse case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to alternating case 1" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Convert to alternating case 2" onclick="addMethod(this.value)">
+<input type="button" value="Convert to capitalized case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to camel case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to snake case" onclick="addMethod(this.value)">
+<input type="button" value="Convert to slug case" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Latinise" onclick="addMethod(this.value)">
+<input type="button" value="Reverse text" onclick="addMethod(this.value)">
+<input type="button" value="Convert to Base64" onclick="addMethod(this.value)">
+<input type="button" value="Convert from Base64" onclick="addMethod(this.value)">
+<input type="button" value="Set to one line" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Remove redundant spaces" onclick="addMethod(this.value)">
+<input type="button" value="Remove spaces" onclick="addMethod(this.value)">
+<input type="button" value="Remove duplicated lines" onclick="addMethod(this.value)">
+<input type="button" value="Remove blank lines" onclick="addMethod(this.value)">
+<input type="button" value="Set to list" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Reverse list" onclick="addMethod(this.value)">
+<input type="button" value="Sort list naturally" onclick="addMethod(this.value)">
+<input type="button" value="Extract substrings" onclick="addMethod(this.value)">
+<input type="button" value="Evaluate as math expression" onclick="addMethod(this.value)">
+<input type="button" value="Simplify as math expression" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Beautify JSON" onclick="addMethod(this.value)">
+<input type="button" value="Uglify JSON" onclick="addMethod(this.value)">
+<input type="button" value="Convert XML to JSON" onclick="addMethod(this.value)">
+<input type="button" value="Convert to UTF-8 binary" onclick="addMethod(this.value)">
+<input type="button" value="Convert to UTF-16 BE binary" onclick="addMethod(this.value)">
+<br></br>
+<input type="button" value="Search" onclick="addMethod(this.value)">
+<input type="button" value="Replace" onclick="addMethod(this.value)">
+</body>
+</html>
