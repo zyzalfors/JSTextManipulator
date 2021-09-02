@@ -8,6 +8,10 @@ function unwrapText(checkboxObj) {
    }
 }
 
+function setColor() {
+	document.body.style.backgroundColor = document.getElementById("color").value;	
+}
+
 function getClipboardText() {
  navigator.clipboard.readText().then(function(clipText) { document.getElementById("original").value = clipText; });
 }

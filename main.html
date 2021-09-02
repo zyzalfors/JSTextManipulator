@@ -10,13 +10,15 @@
 <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-JS Text Manipulator 1.4.4
+JS Text Manipulator 1.4.5
 <hr>
 <textarea id="original" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
 <textarea id="manipulated" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
 <textarea id="methods" rows="20" cols="50" readonly>{ "methods" : [] }</textarea>
 <br>
-<input type="checkbox" id="unwrap" onchange="unwrapText(this)"><label for="unwrap">Unwrap text</label>
+<input type="checkbox" id="unwrap" onchange="unwrapText(this)"><label>Unwrap text</label>
+<br>
+<label>Background color</label>: <input type="color" id="color" value="#d3d3d3" oninput="setColor()">
 <hr>
 <input type="file" id="file">
 <input type="button" value="Select file" onclick="document.getElementById('file').click()">
