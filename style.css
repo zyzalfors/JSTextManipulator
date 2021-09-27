@@ -10,7 +10,3 @@ input[type=button] {
 input[type=number], input[type=text]  {
 	width: 252px;
 }
-
-input[type=file]  {
-	display: none;
-}

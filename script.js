@@ -8,6 +8,16 @@ function unwrapText(checkboxObj) {
    }
 }
 
+function addOnInputEvent(checkboxObj) {
+   let originalTextArea = document.getElementById("original");
+   if(checkboxObj.checked) {
+    originalTextArea.oninput = manipulateText;
+   }
+   else {
+    originalTextArea.oninput = function(){};
+  }
+}
+
 function setColor() {
 	document.body.style.backgroundColor = document.getElementById("color").value;	
 }

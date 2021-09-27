@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JS Text Manipulator 1.4.5</title>
+<title>JS Text Manipulator 1.4.6</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.19.0/parser.min.js"></script>
@@ -10,18 +10,18 @@
 <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-JS Text Manipulator 1.4.5
+JS Text Manipulator 1.4.6
 <hr>
 <textarea id="original" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
 <textarea id="manipulated" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
 <textarea id="methods" rows="20" cols="50" readonly>{ "methods" : [] }</textarea>
 <br>
 <input type="checkbox" id="unwrap" onchange="unwrapText(this)"><label>Unwrap text</label>
+<input type="checkbox" id="addOnInput" onchange="addOnInputEvent(this)"><label>Manipulate original text on input</label>
 <br>
-<label>Background color</label>: <input type="color" id="color" value="#d3d3d3" oninput="setColor()">
+<label>Background color:</label> <input type="color" id="color" value="#d3d3d3" oninput="setColor()">
 <hr>
-<input type="file" id="file">
-<input type="button" value="Select file" onclick="document.getElementById('file').click()">
+<input type="file" id="file">&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="button" value="Get file text" onclick="getFileText()">
 <input type="button" value="Get clipboard text" onclick="getClipboardText()">
 <br></br>
@@ -52,7 +52,7 @@ JS Text Manipulator 1.4.5
 <hr>
 <input type="number" id="start" placeholder="Enter substring starting index">
 <input type="number" id="final" placeholder="Enter substring final index">
-<input type="text" id="replacement"placeholder="Enter replacement">
+<input type="text" id="replacement" placeholder="Enter replacement">
 <input type="text" id="regex" placeholder="Enter regular expression">
 <input type="checkbox" id="global"><label>Global</label>
 <input type="checkbox" id="caseIns"><label>Case-insensitive</label>
