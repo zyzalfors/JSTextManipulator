@@ -614,4 +614,7 @@ function manipulateText() {
   }
  }
  document.getElementById("manipulated").value = manipulatedText;
+ if(document.getElementById("copyManipulated").checked) { 
+   copyText("manipulated"); 
+ }
 }
