@@ -23,7 +23,7 @@ function setColor() {
 }
 
 function getClipboardText() {
- navigator.clipboard.readText().then(function(clipText) { document.getElementById("original").value = clipText; });
+    navigator.clipboard.readText().then(function(clipText) { document.getElementById("original").value = clipText; });
 }
 
 function getFileText() {
@@ -239,21 +239,11 @@ function getRegex(regex, global, caseIns) {
 }
 
 function extract(text, startI, finalI, regExp) {
- let matches = getSubstring(text, startI, finalI).match(regExp);
- let manipulatedText = "";
- for(let match of matches) {
-  manipulatedText += match + "\n";
- }
- return manipulatedText.slice(0,-1);
+ return getSubstring(text, startI, finalI).match(regExp).join("\n");
 }
 
 function getSubstring(text, startI, finalI) {
- let characters = v.graphemes(text);
- let manipulatedText = "";
- for(let i = startI; i <= finalI; i++) {
-  manipulatedText += characters[i];
- }
- return manipulatedText;
+ return v.graphemes(text).slice(startI, finalI + 1).join("");
 }
 
 function replaceWithMethod(text, startI, finalI, regExp, method) {
@@ -264,8 +254,7 @@ function replaceWithMethod(text, startI, finalI, regExp, method) {
  return firstPart + manipulatedPart + lastPart;
 }
 
-function replaceWithReplacement(text, startI, finalI, regExp, replacement)
-{
+function replaceWithReplacement(text, startI, finalI, regExp, replacement) {
  let size = v.graphemes(text).length;
  let firstPart = getSubstring(text, 0, startI - 1);
  let lastPart = getSubstring(text, finalI + 1, size - 1);
@@ -319,8 +308,7 @@ function toSentence(text) {
  return manipulatedText;
 }
 
-function toAlternating1(text)
-{
+function toAlternating1(text) {
  let manipulatedText = "";
  let toUp = true;
  for (let i = 0; i < text.length; i++) {
@@ -412,7 +400,7 @@ function base64ToFile() {
  reader.onload = function () {
 						   let rawText = window.atob(this.result);
 						   let bytes = [];
-                           Array.from(rawText).forEach( function (entry) { bytes.push(entry.charCodeAt()); } );
+                           Array.from(rawText).forEach( function (entry) { bytes.push(entry.codePointAt()); } );
 			               let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
                            let a = document.createElement("a");
                            a.download = "JSTM_base64ToFile.txt";
@@ -438,24 +426,20 @@ function toList(text) {
 }
 
 function removeDuplicatedLines(text) {
- let lines = Array.from(new Set(text.split("\n")));
- return lines.join("\n");
+ return Array.from(new Set(text.split("\n"))).join("\n");
 }
 
 function removeBlankLines(text) {
- let lines = text.split("\n").filter(function (text){ return text.search(/[^\s]/g) !== -1; });
- return lines.join("\n");
+ return text.split("\n").filter(function (text){ return text.search(/[^\s]/g) !== -1; }).join("\n");
 }
 
 function reverseList(text) {
- let lines = text.split("\n").reverse();
- return lines.join("\n");
+ return text.split("\n").reverse().join("\n");
 }
 
 function sortNaturally(text) {
  let collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
- let lines = text.split("\n").sort(collator.compare);
- return lines.join("\n");
+ return text.split("\n").sort(collator.compare).join("\n");
 }
 
 function beautifyJSON(text) {
@@ -507,12 +491,12 @@ function manipulateText() {
  let methods = JSON.parse(document.getElementById("methods").value).methods;
  let manipulatedText = document.getElementById("original").value;
  for(let entry of methods) {
-  let size = Array.from(manipulatedText).length;
+  let size = v.graphemes(manipulatedText).length;
   let regex = clearFromJSON(JSON.stringify(entry.regularExpression));
   let replacement = clearFromJSON(JSON.stringify(entry.replacement));
   let global = entry.global;
   let caseIns = entry.caseInsensitive;
-  let regExp = getRegex(regex,global,caseIns);
+  let regExp = getRegex(regex, global, caseIns);
   let startI = (entry.startingIndex === null || entry.startingIndex < 0 || entry.startingIndex > (size - 1)) ? 0 : entry.startingIndex;
   let finalI = (entry.finalIndex === null || entry.finalIndex < startI || entry.finalIndex > (size - 1)) ? (size - 1) : entry.finalIndex;
   let method = JSON.stringify(entry.method);
