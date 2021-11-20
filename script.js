@@ -1,40 +1,38 @@
 function unwrapText(checkboxObj) {
-   let textAreas = Array.from(document.getElementsByTagName("textarea"));
-   if(checkboxObj.checked) {
-    textAreas.forEach( function (area) { area.wrap = "off"; } );
-   }
-   else {
-    textAreas.forEach( function (area) { area.wrap = "on"; } );
-   }
+ let textAreas = Array.from(document.getElementsByTagName("textarea"));
+ if(checkboxObj.checked) {
+  textAreas.forEach( function (area) { area.wrap = "off"; } );
+ }
+ else {
+  textAreas.forEach( function (area) { area.wrap = "on"; } );
+ }
 }
 
 function addOnInputEvent(checkboxObj) {
-   let originalTextArea = document.getElementById("original");
-   if(checkboxObj.checked) {
-    originalTextArea.oninput = manipulateText;
-   }
-   else {
-    originalTextArea.oninput = function(){};
-  }
+ let originalTextArea = document.getElementById("original");
+ if(checkboxObj.checked) {
+  originalTextArea.oninput = manipulateText;
+ }
+ else {
+  originalTextArea.oninput = function(){};
+ }
 }
 
 function setColor() {
-	document.body.style.backgroundColor = document.getElementById("color").value;	
+ document.body.style.backgroundColor = document.getElementById("color").value;	
 }
 
 function getClipboardText() {
-    navigator.clipboard.readText().then(function(clipText) { document.getElementById("original").value = clipText; });
+ navigator.clipboard.readText().then(function(clipText) { document.getElementById("original").value = clipText; });
 }
 
 function getFileText() {
  let value = removeSpaces(document.getElementById("encoding").value);
- let encoding = (value === "") ? "UTF-8" : value;
+ let encoding = value === "" ? "UTF-8" : value;
  let file = document.getElementById("file").files[0];
  let reader = new FileReader();
  reader.readAsArrayBuffer(file);
- reader.onload = function () { 
-   document.getElementById("original").value = new TextDecoder(encoding).decode(new Uint8Array(this.result)); 
- };
+ reader.onload = function () { document.getElementById("original").value = new TextDecoder(encoding).decode(new Uint8Array(this.result)); };
 }
 
 function saveText(filter) {
@@ -48,32 +46,32 @@ function saveText(filter) {
 
 function toUTF8() {
  let value = removeSpaces(document.getElementById("encoding").value);
- let encoding = (value === "") ? "UTF-8" : value;
+ let encoding = value === "" ? "UTF-8" : value;
  let file = document.getElementById("file").files[0];
  let reader = new FileReader();
  reader.readAsArrayBuffer(file);
  reader.onload = function () {
                               let text = new TextDecoder(encoding).decode(new Uint8Array(this.result));
-							  let blob = new Blob([text], {type:'text/plain'});
+			      let blob = new Blob([text], {type:'text/plain'});
                               let a = document.createElement("a");
                               a.download = "JSTM_toUTF8.txt";
                               a.href = window.URL.createObjectURL(blob);
                               a.click();
-							 };
+			     };
 }
 
 function toASCII() {
  let value = removeSpaces(document.getElementById("encoding").value);
- let encoding = (value === "") ? "UTF-8" : value;
+ let encoding = value === "" ? "UTF-8" : value;
  let file = document.getElementById("file").files[0];
  let reader = new FileReader();
  reader.readAsArrayBuffer(file);
  reader.onload = function () {
-						      let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
-							  let bytes = [];
-						      for(let entry of characters) {
-     	 		 	            bytes.push((entry.codePointAt() <= 255) ? entry.codePointAt() : 20);
-						      }
+                              let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+                              let bytes = [];
+                              for(let entry of characters) {
+     	 		       bytes.push(entry.codePointAt() <= 255 ? entry.codePointAt() : 20);
+			      }
                               let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
                               let a = document.createElement("a");
                               a.download = "JSTM_toASCII.txt";
@@ -84,68 +82,68 @@ function toASCII() {
 
 function toUTF16BE() {
  let value = removeSpaces(document.getElementById("encoding").value);
- let encoding = (value === "") ? "UTF-8" : value;
+ let encoding = value === "" ? "UTF-8" : value;
  let file = document.getElementById("file").files[0];
  let reader = new FileReader();
  reader.readAsArrayBuffer(file);
  reader.onload = function () {
-						   let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
-		                   let bytes = [254, 255];
-                           for(let entry of characters) {
-						    let code = entry.codePointAt();
-	 		  				if(code <= 65535) {
-							 let stringifiedBytes = code.toString(2).padStart(16,"0");
-							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
-						     bytes.push(parseInt(stringifiedBytes.substring(8),2));
-							}
-							else {
-							 let tempBin = (code - 65536).toString(2).padStart(20,"0");
-							 let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
-							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(24),2));
-							}
-						   }						   
-			               let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
-                           let a = document.createElement("a");
-                           a.download = "JSTM_toUTF16BE.txt";
-                           a.href = window.URL.createObjectURL(blob);
-                           a.click();							
-                          };
+		              let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+		              let bytes = [254, 255];
+                              for(let entry of characters) {
+			       let code = entry.codePointAt();
+	 		       if(code <= 65535) {
+			        let stringifiedBytes = code.toString(2).padStart(16,"0");
+				bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+				bytes.push(parseInt(stringifiedBytes.substring(8),2));
+			       }
+			       else {
+			        let tempBin = (code - 65536).toString(2).padStart(20,"0");
+				let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
+				bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+				bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
+				bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
+				bytes.push(parseInt(stringifiedBytes.substring(24),2));
+			       }
+			      }						   
+			      let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
+                              let a = document.createElement("a");
+                              a.download = "JSTM_toUTF16BE.txt";
+                              a.href = window.URL.createObjectURL(blob);
+                              a.click();							
+                             };
 }
 
 function toUTF16LE() {
  let value = removeSpaces(document.getElementById("encoding").value);
- let encoding = (value === "") ? "UTF-8" : value;
+ let encoding = value === "" ? "UTF-8" : value;
  let file = document.getElementById("file").files[0];
  let reader = new FileReader();
  reader.readAsArrayBuffer(file);
  reader.onload = function () {
-						   let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
-		                   let bytes = [255, 254];
-						   for(let entry of characters) {
-						    let code = entry.codePointAt();
-	 		  				if(code <= 65535) {
-							 let stringifiedBytes = code.toString(2).padStart(16,"0");
-							 bytes.push(parseInt(stringifiedBytes.substring(8),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
-						    }
-							else {
-							 let tempBin = (code - 65536).toString(2).padStart(20,"0");
-							 let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
-							 bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
-                             bytes.push(parseInt(stringifiedBytes.substring(24),2));
-							 bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
-							}
-						   }
-			               let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
-                           let a = document.createElement("a");
-                           a.download = "JSTM_toUTF16LE.txt";
-                           a.href = window.URL.createObjectURL(blob);
-                           a.click();							
-                          };
+			      let characters = v.graphemes(new TextDecoder(encoding).decode(new Uint8Array(this.result)));
+		              let bytes = [255, 254];
+			      for(let entry of characters) {
+			       let code = entry.codePointAt();
+	 		       if(code <= 65535) {
+				let stringifiedBytes = code.toString(2).padStart(16,"0");
+				bytes.push(parseInt(stringifiedBytes.substring(8),2));
+				bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+			       }
+			       else {
+				let tempBin = (code - 65536).toString(2).padStart(20,"0");
+				let stringifiedBytes = "110110" + tempBin.substring(0,10) + "110111" + tempBin.substring(10);
+				bytes.push(parseInt(stringifiedBytes.substring(8,16),2));
+				bytes.push(parseInt(stringifiedBytes.substring(0,8),2));
+                                bytes.push(parseInt(stringifiedBytes.substring(24),2));
+				bytes.push(parseInt(stringifiedBytes.substring(16,24),2));
+			       }
+			      }
+			      let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
+                              let a = document.createElement("a");
+                              a.download = "JSTM_toUTF16LE.txt";
+                              a.href = window.URL.createObjectURL(blob);
+                              a.click();							
+                             };
 }
 
 function clearText(filter) {
@@ -198,21 +196,21 @@ function addMethod(filter) {
  let regex = document.getElementById("regex").value;
  let startI = parseInt(document.getElementById("start").value);
  let finalI = parseInt(document.getElementById("final").value);
- let global = (filter === "Search") ? true : document.getElementById("global").checked;
+ let global = filter === "Search" ? true : document.getElementById("global").checked;
  let caseIns = document.getElementById("caseIns").checked;
- let replacement = (filter === "Replace") ? document.getElementById("replacement").value : null;
+ let replacement = filter === "Replace" ? document.getElementById("replacement").value : null;
  let json = JSON.parse(document.getElementById("methods").value);
  json.methods.push(
                    {
                     "method": filter,
                     "regularExpression": regex,
-					"global": global,
-					"caseInsensitive": caseIns,
-					"replacement": replacement,
-					"startingIndex": startI,
-					"finalIndex": finalI
-				   }
-				  );
+		    "global": global,
+		    "caseInsensitive": caseIns,
+		    "replacement": replacement,
+		    "startingIndex": startI,
+		    "finalIndex": finalI
+		   }
+		  );
  document.getElementById("methods").value = JSON.stringify(json,null,1);
 }
 
@@ -290,18 +288,18 @@ function toSentence(text) {
  let toUp = true;
  for(let i = 0; i < text.length; i++) {
   if(text[i].search(/[!\?\.\s]/) === -1) {
-   if (toUp === true && text[i].toUpperCase() !== text[i].toLowerCase() ) {
-	manipulatedText += text[i].toUpperCase();
-	toUp = false;
+   if(toUp === true && text[i].toUpperCase() !== text[i].toLowerCase() ) {
+    manipulatedText += text[i].toUpperCase();
+    toUp = false;
    }
    else {
-  	manipulatedText += text[i].toLowerCase();	
+    manipulatedText += text[i].toLowerCase();	
    }
   }
   else {
    manipulatedText += text[i];
-   if (i < text.length - 1 && text[i].search(/[!\?\.]/) !== -1 && text[i + 1].search(/\s/) !== -1) {
-	toUp = true;
+   if(i < text.length - 1 && text[i].search(/[!\?\.]/) !== -1 && text[i + 1].search(/\s/) !== -1) {
+    toUp = true;
    }
   }
  }
@@ -311,8 +309,8 @@ function toSentence(text) {
 function toAlternating1(text) {
  let manipulatedText = "";
  let toUp = true;
- for (let i = 0; i < text.length; i++) {
-  if (text[i].toUpperCase() !== text[i].toLowerCase()) {
+ for(let i = 0; i < text.length; i++) {
+  if(text[i].toUpperCase() !== text[i].toLowerCase()) {
    if(toUp === true) {
     manipulatedText += text[i].toUpperCase();
     toUp = false;
@@ -333,7 +331,7 @@ function toAlternating2(text) {
  let manipulatedText = "";
  let toUp = false;
  for (let i = 0; i < text.length; i++) {
-  if (text[i].toUpperCase() !== text[i].toLowerCase()) {
+  if(text[i].toUpperCase() !== text[i].toLowerCase()) {
    if(toUp === true) {
     manipulatedText += text[i].toUpperCase();
     toUp = false;
@@ -353,14 +351,14 @@ function toAlternating2(text) {
 function toCapitalized(text) {
  let manipulatedText = "";
  let toUp = true;
- for (let i = 0; i < text.length; i++) {
+ for(let i = 0; i < text.length; i++) {
   if(text[i].search(/\s/) === -1) {
-   if (toUp === true)  {
-	manipulatedText += text[i].toUpperCase();
-	toUp = false;
+   if(toUp === true)  {
+    manipulatedText += text[i].toUpperCase();
+    toUp = false;
    }
    else {
-	manipulatedText += text[i].toLowerCase();
+    manipulatedText += text[i].toLowerCase();
    }
   }
   else {
@@ -380,13 +378,13 @@ function fileToBase64() {
  let reader = new FileReader();
  reader.readAsDataURL(file);
  reader.onload = function () {
-		                   let base64String = this.result.substring(this.result.search(",") + 1);
-                           let blob = new Blob([base64String], {type:'text/plain'});
-                           let a = document.createElement("a");
-                           a.download = "JSTM_fileToBase64.txt";
-                           a.href = window.URL.createObjectURL(blob);
-                           a.click();							
-                          };
+		              let base64String = this.result.substring(this.result.search(",") + 1);
+                              let blob = new Blob([base64String], {type:'text/plain'});
+                              let a = document.createElement("a");
+                              a.download = "JSTM_fileToBase64.txt";
+                              a.href = window.URL.createObjectURL(blob);
+                              a.click();							
+                             };
 }
 
 function fromBase64(text) {
@@ -398,15 +396,15 @@ function base64ToFile() {
  let reader = new FileReader();
  reader.readAsText(file);
  reader.onload = function () {
-						   let rawText = window.atob(this.result);
-						   let bytes = [];
-                           Array.from(rawText).forEach( function (entry) { bytes.push(entry.codePointAt()); } );
-			               let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
-                           let a = document.createElement("a");
-                           a.download = "JSTM_base64ToFile.txt";
-                           a.href = window.URL.createObjectURL(blob);
-                           a.click();					
-                          };
+			      let rawText = window.atob(this.result);
+			      let bytes = [];
+                              Array.from(rawText).forEach( function (entry) { bytes.push(entry.codePointAt()); } );
+			      let blob = new Blob([new Uint8Array(bytes)], {type:'octet/stream'});
+                              let a = document.createElement("a");
+                              a.download = "JSTM_base64ToFile.txt";
+                              a.href = window.URL.createObjectURL(blob);
+                              a.click();					
+                             };
 }
 
 function toOneLine(text) {
@@ -497,8 +495,8 @@ function manipulateText() {
   let global = entry.global;
   let caseIns = entry.caseInsensitive;
   let regExp = getRegex(regex, global, caseIns);
-  let startI = (entry.startingIndex === null || entry.startingIndex < 0 || entry.startingIndex > (size - 1)) ? 0 : entry.startingIndex;
-  let finalI = (entry.finalIndex === null || entry.finalIndex < startI || entry.finalIndex > (size - 1)) ? (size - 1) : entry.finalIndex;
+  let startI = entry.startingIndex === null || entry.startingIndex < 0 || entry.startingIndex > (size - 1) ? 0 : entry.startingIndex;
+  let finalI = entry.finalIndex === null || entry.finalIndex < startI || entry.finalIndex > (size - 1) ? (size - 1) : entry.finalIndex;
   let method = JSON.stringify(entry.method);
   if(method.includes("Replace")) {
    manipulatedText = replaceWithReplacement(manipulatedText, startI, finalI, regExp, replacement);
