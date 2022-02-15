@@ -459,7 +459,7 @@ function uglifyJSON(text) {
 }
 
 function XMLtoJSON(text) {
- return JSON.stringify(parser.convertToJson(parser.getTraversalObj(text,{ }),{ }),null,0);
+  return JSON.stringify(new XMLParser({ }).parse(text), null, 0);
 }
 
 function searchText(text, startI, finalI, regExp) {
