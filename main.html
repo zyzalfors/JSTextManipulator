@@ -2,99 +2,101 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JS Text Manipulator</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.1.1/math.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/4.0.2/fxparser.min.js"></script>
-<script src="script.js"></script>
+<title>JS Text Manipulator v1.5.0</title>
 <link rel="stylesheet" type="text/css" href="style.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.1/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/voca/1.4.0/voca.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/4.0.8/fxparser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="script.js"></script>
 </head>
 <body>
-JS Text Manipulator
-<hr>
-<textarea id="original" rows="20" cols="70" placeholder="Enter original text here ..."></textarea>
-<textarea id="manipulated" rows="20" cols="70" placeholder="Manipulated text will appear here ..."></textarea>
-<textarea id="methods" rows="20" cols="50" readonly>{ "methods" : [] }</textarea>
+<div class="title">JS Text Manipulator v1.5.0</div>
 <br>
-<input type="checkbox" onchange="unwrapText(this)"><label>Unwrap text</label>
+<div class="textareas">
+<div>
+<input type="button" value=&#128427; onclick="saveFileText('original')">
+<input type="button" value=&#128449; onclick="getFileText('original')">
+<input type="button" value=&#8594;&#128466; onclick="writeClipboardText('original', true)">
+<input type="button" value=&#8592;&#128466; onclick="getClipboardText('original')">
+<input type="button" value=&#128465; onclick="document.getElementById('original').value = ''">
+<input type="button" value=&#8594; onclick="document.getElementById('manipulated').value = document.getElementById('original').value;">
+<br>
+<textarea id="original" rows="20" cols="80" placeholder="Enter original text here ..."></textarea>
+</div>
+<div>
+<input type="button" value=&#128427; onclick="saveFileText('manipulated')">
+<input type="button" value=&#128449; onclick="getFileText('manipulated')">
+<input type="button" value=&#8594;&#128466; onclick="writeClipboardText('manipulated', true)">
+<input type="button" value=&#8592;&#128466; onclick="getClipboardText('manipulated')">
+<input type="button" value=&#128465; onclick="document.getElementById('manipulated').value = ''">
+<input type="button" value=&#8592; onclick="document.getElementById('original').value = document.getElementById('manipulated').value;">
+<br>
+<textarea id="manipulated" rows="20" cols="80" placeholder="Manipulated text will appear here ..."></textarea>
+</div>
+<div>
+<input type="button" value=&#128465; onclick="clearMethods()">
+<br>
+<textarea id="methods" rows="20" cols="40" readonly>{ "methods" : [] }</textarea>
+</div>
+</div>
+<br>
+<div>
 <input type="checkbox" onchange="addOnInputEvent(this)"><label>Manipulate original text on input</label>
 <input type="checkbox" id="copyManipulated"><label>Copy manipulated text to clipboard</label>
-<br>
-<label>Background color:</label> <input type="color" id="color" value="#d3d3d3" oninput="setColor()">
-<hr>
-<input type="file" id="file">&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="button" value="Get file text" onclick="getFileText()">
-<input type="button" value="Get clipboard text" onclick="getClipboardText()">
-<br></br>
-<input type="text" id="encoding" placeholder="Enter encoding used in file">
-<input type="button" value="Convert to UTF-8 encoding" onclick="toUTF8()">
-<input type="button" value="Convert to ASCII encoding"  onclick="toASCII()">
-<input type="button" value="Convert to UTF-16 BE encoding" onclick="toUTF16BE()">
-<input type="button" value="Convert to UTF-16 LE encoding" onclick="toUTF16LE()">
-<br></br>
-<input type="button" value="Convert from Base64" onclick="base64ToFile()">
-<input type="button" value="Convert to Base64" onclick="fileToBase64()">
-<hr>
-<input type="button" value="Clear text areas" onclick="clearText(this.value)">
-<input type="button" value="Clear original text area" onclick="clearText(this.value)">
-<input type="button" value="Clear manipulated text area" onclick="clearText(this.value)">
-<input type="button" value="Clear methods list" onclick="clearText(this.value)">
-<input type="button" value="Copy original text to clipboard" onclick="copyText(this.value)">
-<br></br>
-<input type="button" value="Copy manipulated text to clipboard" onclick="copyText(this.value)">
-<input type="button" value="Move manipulated text to original text area" onclick="moveText(this.value)">
-<input type="button" value="Move original text to manipulated text area" onclick="moveText(this.value)">
-<input type="button" value="Save original text" onclick="saveText(this.value)">
-<input type="button" value="Save manipulated text" onclick="saveText(this.value)">
-<br></br>
-<input type="button" value="Remove first method from list" onclick="removeMethod(this.value)">
-<input type="button" value="Remove last method from list" onclick="removeMethod(this.value)">
-<input type="button" value="Manipulate original text" onclick="manipulateText()">
-<hr>
-<input type="number" id="start" placeholder="Enter substring starting index">
-<input type="number" id="final" placeholder="Enter substring final index">
+<br><br>
+<input type="number" min="0" id="start" placeholder="Enter starting index">
+<input type="number" min="0" id="final" placeholder="Enter final index">
+<br><br>
 <input type="text" id="replacement" placeholder="Enter replacement">
 <input type="text" id="regex" placeholder="Enter regular expression">
 <input type="checkbox" id="global"><label>Global</label>
 <input type="checkbox" id="caseIns"><label>Case-insensitive</label>
-<br></br>
-<input type="button" value="Convert to sentence case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to upper case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to lower case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to inverse case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to alternating case 1" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Convert to alternating case 2" onclick="addMethod(this.value)">
-<input type="button" value="Convert to capitalized case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to camel case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to snake case" onclick="addMethod(this.value)">
-<input type="button" value="Convert to slug case" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Latinise" onclick="addMethod(this.value)">
-<input type="button" value="Reverse text" onclick="addMethod(this.value)">
-<input type="button" value="Convert to Base64" onclick="addMethod(this.value)">
-<input type="button" value="Convert from Base64" onclick="addMethod(this.value)">
-<input type="button" value="Set to one line" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Remove redundant spaces" onclick="addMethod(this.value)">
-<input type="button" value="Remove spaces" onclick="addMethod(this.value)">
-<input type="button" value="Remove duplicated lines" onclick="addMethod(this.value)">
-<input type="button" value="Remove blank lines" onclick="addMethod(this.value)">
-<input type="button" value="Set to list" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Reverse list" onclick="addMethod(this.value)">
-<input type="button" value="Sort list naturally" onclick="addMethod(this.value)">
-<input type="button" value="Extract substrings" onclick="addMethod(this.value)">
-<input type="button" value="Evaluate as math expression" onclick="addMethod(this.value)">
-<input type="button" value="Simplify as math expression" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Beautify JSON" onclick="addMethod(this.value)">
-<input type="button" value="Uglify JSON" onclick="addMethod(this.value)">
-<input type="button" value="Convert XML to JSON" onclick="addMethod(this.value)">
-<input type="button" value="Convert to UTF-8 binary" onclick="addMethod(this.value)">
-<input type="button" value="Convert to UTF-16 BE binary" onclick="addMethod(this.value)">
-<br></br>
-<input type="button" value="Search" onclick="addMethod(this.value)">
-<input type="button" value="Replace" onclick="addMethod(this.value)">
+<br><br>
+<select id="methodList">
+<option value="null">--Select a method--</option>
+<option value="Convert to alternating case 1">Convert to alternating case 1</option>
+<option value="Convert to alternating case 2">Convert to alternating case 2</option>
+<option value="Convert to camel case">Convert to camel case</option>
+<option value="Convert to inverse case">Convert to inverse case</option>
+<option value="Convert to kebab case">Convert to kebab case</option>
+<option value="Convert to lower case">Convert to lower case</option>
+<option value="Convert to sentence case">Convert to sentence case</option>
+<option value="Convert to slug case">Convert to slug case</option>
+<option value="Convert to snake case">Convert to snake case</option>
+<option value="Convert to title case">Convert to title case</option>
+<option value="Convert to upper case">Convert to upper case</option>
+<option value="Convert to single line">Convert to single line</option>
+<option value="Convert to list">Convert to list</option>
+<option value="Convert XML to JSON">Convert XML to JSON</option>
+<option value="Convert from Base64">Convert from Base64</option>
+<option value="Convert to Base64">Convert to Base64</option>
+<option value="Convert to code points">Convert to code points</option>
+<option value="Encode as URI">Encode as URI</option>
+<option value="Decode as URI">Decode as URI</option>
+<option value="Reverse">Reverse</option>
+<option value="Reverse as list">Reverse as list</option>
+<option value="Sort as list">Sort as list</option>
+<option value="Remove spaces">Remove spaces</option>
+<option value="Remove redundant spaces">Remove redundant spaces</option>
+<option value="Remove duplicated lines">Remove duplicated lines</option>
+<option value="Remove empty lines">Remove empty lines</option>
+<option value="Replace">Replace</option>
+<option value="Latinise">Latinise</option>
+<option value="Extract matches">Extract matches</option>
+<option value="Evaluate as math expression">Evaluate as math expression</option>
+<option value="Simplify as math expression">Simplify as math expression</option>
+<option value="Beautify as JSON">Beautify as JSON</option>
+<option value="Uglify as JSON">Uglify as JSON</option>
+<option value="MD5 hash">MD5 hash</option>
+<option value="SHA-1 hash">SHA-1 hash</option>
+<option value="SHA-256 hash">SHA-256 hash</option>
+<option value="SHA-512 hash">SHA-512 hash</option>
+<option value="RIPEMD-160 hash">RIPEMD-160 hash</option>
+</select>
+<input type="button" value="Add method" onclick="addMethod()">
+<br><br>
+<input type="button" value="Manipulate" onclick="manipulateText()">
+</div>
 </body>
 </html>

@@ -1,12 +1,49 @@
-body {   
-     background-color: lightgrey;
+body
+{
+ background-color: #3c3c3c;
+ color: white;
 }
 
-input[type=button] {
-	background-color: white;
-	width: 260px;
+.title
+{
+ color: white;
+ font-size: 20px;
 }
 
-input[type=number], input[type=text]  {
-	width: 252px;
+.textareas
+{
+ display: flex;
+}
+
+textarea::placeholder, input[type=number]::placeholder, input[type=text]::placeholder
+{
+ color: lightgrey;
+}
+
+textarea
+{
+ background-color: #3c3c3c;
+ color: white;
+ outline: none;
+ resize: none;
+}
+
+input[type=button] 
+{
+ background-color: #3c3c3c;
+ color: white;
+ border: 1px solid lightgrey;
+}
+
+input[type=number], input[type=text], select
+{
+ background-color: #3c3c3c;
+ color: white;
+ width: 150px;
+ border: 1px solid lightgrey;
+}
+
+select 
+{
+ width: 200px;
 }
