@@ -253,9 +253,17 @@ function getCodePoints(text)
  let manipulatedText = "";
  for(let char of characters)
  {
-  manipulatedText += "0x" + char.codePointAt() + " ";
+  manipulatedText += "\\u" + char.codePointAt().toString(16).toUpperCase() + " ";
  }
  return manipulatedText.slice(0, -1);
+}
+
+function getFromCodePoints(text)
+{
+ let tokens = removeSpaces(toSingleLine(text.toLowerCase())).split("\\u").filter(entry => entry);
+ let codes = [];
+ tokens.forEach(token => codes.push(parseInt(token, 16)));
+ return String.fromCodePoint(...codes);
 }
 
 function extractMatches(text, start, final, regExp)
@@ -538,6 +546,9 @@ function manipulateText()
 	case "Decode as URI":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, decodeURIComponent);
      break;
+	case "Convert from code points":
+	 manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, getFromCodePoints);
+	 break;
 	case "Convert to code points":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, getCodePoints);
      break;
