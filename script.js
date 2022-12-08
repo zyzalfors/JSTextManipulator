@@ -540,31 +540,31 @@ function manipulateText()
     case "Convert XML to JSON":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, XMLtoJSON);
      break;
-	case "Encode as URI":
+    case "Encode as URI":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, encodeURIComponent);
      break;
-	case "Decode as URI":
+    case "Decode as URI":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, decodeURIComponent);
      break;
-	case "Convert from code points":
-	 manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, getFromCodePoints);
-	 break;
-	case "Convert to code points":
+    case "Convert from code points":
+     manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, getFromCodePoints);
+     break;
+    case "Convert to code points":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, getCodePoints);
      break;
-	case "MD5 hash":
+    case "MD5 hash":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, CryptoJS.MD5);
      break;
-	case "SHA-1 hash":
+    case "SHA-1 hash":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, CryptoJS.SHA1);
      break;
-	case "SHA-256 hash":
+    case "SHA-256 hash":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, CryptoJS.SHA256);
      break;
-	case "SHA-512 hash":
+    case "SHA-512 hash":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, CryptoJS.SHA512);
      break;
-	case "RIPEMD-160 hash":
+    case "RIPEMD-160 hash":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, CryptoJS.RIPEMD160);
      break;
     default:
