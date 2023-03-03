@@ -426,6 +426,36 @@ function uglifyJSON(text)
  return JSON.stringify(JSON.parse(text), null, 0);
 }
 
+function queryStringToJSON(text)
+{
+ let pairs = text.split("&");
+ let obj = {};
+ for(let pair of pairs)
+ {
+  let entries = pair.split("=");
+  let key = entries[0];
+  entries.shift();
+  let value = (entries.length > 1 ? entries.join("=") : entries[0]) ?? null;
+  if(!obj.hasOwnProperty(key))
+  {
+   obj[key] = value;
+  }
+  else
+  {
+   if(obj[key] !== null && obj[key].constructor.name === "Array")
+   {
+    obj[key].push(value);  
+   }
+   else
+   {
+    let temp = obj[key];
+    obj[key] = [temp, value];
+   }
+  }
+ }
+ return JSON.stringify(obj);
+}
+
 function XMLtoJSON(text)
 {
  return JSON.stringify(new XMLParser({ }).parse(text), null, 0);
@@ -536,6 +566,9 @@ function manipulateText()
      break;
     case "Uglify as JSON":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, uglifyJSON);
+     break;
+    case "Convert query string to JSON":
+     manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, queryStringToJSON);
      break;
     case "Convert XML to JSON":
      manipulatedText = replaceUsingMethod(manipulatedText, start, final, regExp, XMLtoJSON);
